@@ -50,7 +50,7 @@ formPresupuesto.addEventListener(`submit`, (e)=>{
     localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
     localStorage.setItem(`divisa`, JSON.stringify(divisa))
 
-    divContenedorPresupuesto.classList.toggle(`removeContenedor`, presupuesto != null)
+    divContenedorPresupuesto.classList.toggle(`removeContenedor`, presupuesto != 0)
     divAgregarGastos.classList.remove(`display`)
 })
 
