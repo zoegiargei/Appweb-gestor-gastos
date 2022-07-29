@@ -11,7 +11,7 @@ class Gasto{
 
 //Array de gastos del usuario
 let gastos = []
-let presupuesto = 0
+let presupuesto
 let divisa
 
 //Variables
