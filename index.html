@@ -23,8 +23,10 @@
 
         <header class="row mx-auto">
             <!--Col-->
-            <div class="col-12">
+            <div class="col-12 contenedorHeader">
+
                 <h1 class="display-3">Gestor de Gastos</h1>
+                <div id="divMostrarPresupuesto" class="row m-3 presupuestoNormal"></div>
             </div>
         </header>
 
@@ -77,6 +79,9 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary mt-3">Agregar Gasto</button>
+
+                                <div id="divPresupuestoAgotado"></div>
+                                <button type="submit" class="display">Modificar Presupuesto</button>
                             </form>
 
                         </div>
@@ -86,10 +91,7 @@
                     <div class="container p-3 bg-light border rounded">
 
                         <button id="btnGastos" class="btn btn-dark mt-1">Mostrar Gastos</button>
-                        <button id="btnMostrarPresupuesto" class="btn btn-secondary mt-1">Mostrar Presupuesto</button>
-
-                        <div id="divMostrarPresupuesto" class="row m-3"></div>
-                        <div id= "divGastos" class="row"></div> 
+                        <div id= "divGastos" class="row mostrarGastos"></div> 
                     </div>
                 
                 </div>
@@ -105,6 +107,8 @@
     </div>
     
     <!--JavaScript Local-->
+    <script src="./javaScript/clases.js"></script>
+    <script src="./javaScript/funciones.js"></script>
     <script src="./javaScript/scripts.js"></script>
 </body>
 </html>

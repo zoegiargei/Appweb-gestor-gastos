@@ -1,128 +1,101 @@
-//Clases
-
-class Gasto{
-    constructor(titulo, categoria, monto){
-        this.titulo = titulo
-        this.categoria = categoria
-        this.monto = monto
-        this.fecha = (new Date()).toLocaleDateString()
-    }
-}
-
 //Array de gastos del usuario
 let gastos = []
-let presupuesto
-let divisa
+//Presupuesto y divisa
+let presupuesto = 0
+let divisa = ""
 
-//Variables
+//Variables capturadas del DOM
 const formPresupuesto = document.getElementById(`formPresupuesto`)
 const divContenedorPresupuesto = document.getElementById(`divContenedorPresupuesto`)
 const divAgregarGastos = document.getElementById(`divAgregarGastos`)
 const divNoCargoMonto = document.getElementById(`divNoCargoMonto`)
+const divMostrarPresupuesto = document.getElementById(`divMostrarPresupuesto`)
+const btnMostrarPresupuesto = document.getElementById(`btnMostrarPresupuesto`)
+const divPresupuestoAgotado = document.getElementById(`divPresupuestoAgotado`)
 
+//Iniciamos el div de Mostrar Presupuesto en ""
+divMostrarPresupuesto.innerHTML=""
 
-
-if (localStorage.getItem(`gastos`,`presupuesto`)) { //consulto y capturo datos del storage
+//Preguntamos en el Local storage si hay guardados datos de Gastos, Presupuesto y Divisa
+if (localStorage.getItem(`gastos`,`presupuesto`,`divisa`)) { //consulto y capturo datos del storage
 
     gastos = JSON.parse(localStorage.getItem(`gastos`))
-    presupuesto = localStorage.getItem(`presupuesto`)
-    divisa = localStorage.getItem(`divisa`)
+    presupuesto = JSON.parse(localStorage.getItem(`presupuesto`))
+    divisa = JSON.parse(localStorage.getItem(`divisa`))
 
     divContenedorPresupuesto.classList.toggle(`removeContenedor`)
     divAgregarGastos.classList.remove(`display`)
 
-} else {
+} else { //Si la respuesta es que NO hay datos guardados agregamos al local storage las variables iniciadas vacías
     localStorage.setItem('gastos', JSON.stringify(gastos)) //agrego datos al storage si es que previamente no había
     localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
     localStorage.setItem(`divisa`, JSON.stringify(divisa))
 }
 
+
 //Cargar Presupuesto + Agregar al localStorage
 formPresupuesto.addEventListener(`submit`, (e)=>{
-
-    e.preventDefault()
-
+    
+    e.preventDefault() //Prevenimos función respuesta parámetro por defecto
+    
     presupuesto = document.getElementById(`presupuesto`).value
     divisa = document.getElementById(`divisa`).value
-
+    
     console.log(presupuesto) //prueba
-
+    
     localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
     localStorage.setItem(`divisa`, JSON.stringify(divisa))
-
+    
     divContenedorPresupuesto.classList.toggle(`removeContenedor`, presupuesto != 0)
     divAgregarGastos.classList.remove(`display`)
+    
+    mostrarPresupuesto(presupuesto)
 })
 
-//Cargar gastos + Agregar al local storage
+//Cargar gastos + Agregar al local storage el array gastos[]
 const formGastos = document.getElementById(`formGastos`)
 
 formGastos.addEventListener(`submit`, (e) => {
 
     e.preventDefault()
-    console.log(e.target)
+    //console.log(e.target)
 
-    let datForm = new FormData(e.target)
-
-    let montoGasto = document.getElementById(`inputMonto`).value
+    let datForm = new FormData(e.target) /*Usamos el objeto formData; para poder capturar los datos del DOM con formData debemos agregar atribuo name a los elementos que estén dentro del formulario*/
+    
+    //let montoGasto = document.getElementById(`inputMonto`).value
     let gasto = new Gasto(datForm.get(`titulo`), datForm.get(`categoria`), datForm.get(`monto`))
-    gastos.push(gasto)
+    
+    let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
 
-    presupuesto -= montoGasto
-    localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
-    localStorage.setItem(`gastos`, JSON.stringify(gastos))
+    if(presupuestoEnStorage < gasto.monto){
+        
+        divPresupuestoAgotado.innerHTML = ``
+        divPresupuestoAgotado.innerHTML += `
+        <p class="mensajeAlerta">No se puede cargar gasto. El valor del presupuesto es menor al gasto que quiere ingresar</p>`
+        
+    } else{
+        
+        divPresupuestoAgotado.innerHTML = ``
+        
+        gastos.push(gasto) //Agregamos al Array Gastos[] el nuevo gasto
+        
+        presupuesto -= gasto.monto
+    
+        //Agregamos a LocalStorage el nuevo valor de Presupuesto y Gastos[]
+        localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
+        localStorage.setItem(`gastos`, JSON.stringify(gastos))
+    
+        formGastos.reset() //Reseteamos el formulario, es decír que en la interfaz de usuario quedará vacío
+    
+        mostrarPresupuesto(presupuesto)
+    }
 
-    formGastos.reset()
-    divMostrarPresupuesto.innerHTML = ""
 })
 
 const btnGastos = document.getElementById(`btnGastos`)
 const divGastos = document.getElementById(`divGastos`)
 
 btnGastos.addEventListener(`click`, () => {
-
-    let datosEnStorage = JSON.parse(localStorage.getItem(`gastos`))
-
-    divGastos.innerHTML = ""
-
-    datosEnStorage.forEach((gasto, indice) => {
-
-        divGastos.innerHTML += `
-        <div class="card border-dark mb-3" id="gasto${indice}" style="max-width: 20rem; margin:4px;">
-            <div><h4>${gasto.titulo}</h4></div>
-            <div class="card-body">
-                <p class="card-title">Categoría: ${gasto.categoria}</p>
-                <p class="card-title">Monto: ${gasto.monto}${divisa}</p>
-                <p class="card-title">Fecha: ${gasto.fecha}</p>
-                <button class="btn btn-danger">Eliminar Gasto</button>
-            </div>
-        </div>
-        
-        `
-    })
-    
-    datosEnStorage.forEach((gasto, indice) => {
-    
-        let btnEliminarGasto = document.getElementById(`gasto${indice}`).lastElementChild.lastElementChild
-
-        btnEliminarGasto.addEventListener(`click`, () => {
-            document.getElementById(`gasto${indice}`).remove()
-            gastos.splice(indice, 1)
-            localStorage.setItem(`gastos`, JSON.stringify(gastos))
-            console.log(`${gasto.titulo} Eliminado`)
-        })
-    })
+    mostrarGastos()
 })
 
-const divMostrarPresupuesto = document.getElementById(`divMostrarPresupuesto`)
-const btnMostrarPresupuesto = document.getElementById(`btnMostrarPresupuesto`)
-
-btnMostrarPresupuesto.addEventListener(`click`, () => {
-
-    divMostrarPresupuesto.innerHTML = ""
-    divMostrarPresupuesto.innerHTML += `
-    <div class="card m-1">
-        <p>Presupuesto:  ${presupuesto} <span>${divisa}</span></p>
-    </div>
-    `
-})
