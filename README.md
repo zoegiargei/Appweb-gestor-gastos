@@ -1,5 +1,6 @@
 # gestor-gastos
-Gestor de gastos, proyecto para curso de JavaScript
+Gestor de gastos, proyecto para curso de JavaScript.
+La idea es ir avanzando en este proyecto y pulirlo para el proyecto final. Por el momento solo nos permite ingresar un "Presupuesto" y luego gastos que irán restándose en el presupuesto. Además podemos ver los gastos y Eliminarlos.
 
 # Proyecto de prueba de aplicación de la tecnología JavaScript
 ***
