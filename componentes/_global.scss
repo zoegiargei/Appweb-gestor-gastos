@@ -1,0 +1,42 @@
+body{
+
+    background-image: url(../imagenes/coffee-beans-background.jpg);
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: contain;
+
+    font-family: 'Montserrat', sans-serif;
+
+    &::before{
+
+        width: 100%;
+        left: 0;
+        top: 0;
+    }
+
+    &::after{
+
+        width: 100%;  
+        bottom: 0;
+        right: 0;
+    }
+
+    &::before, &::after{
+        
+        content: '';  
+        background: rgb(127, 130, 186);
+        position: fixed;
+        z-index: 9999999;
+        height: 4px;  
+    }
+}
+
+.removeContenedor{
+    display: none;
+}
+
+.display{
+    display: none;
+}
+
+//body::before, body::after {}
