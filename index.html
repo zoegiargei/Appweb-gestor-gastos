@@ -36,11 +36,11 @@
 
                     <div class="p-2 bg-light border rounded" class="divContenedorPresupuesto" id="divContenedorPresupuesto">
 
-                        <h2 class="display-5 p-1 mb-3">Ingrese su presupuesto</h2>
+                        <h2 class="display-5 p-1 mb-3">Presupuesto</h2>
         
                         <form id="formPresupuesto" class="input-group mb-3">
 
-                            <input type="number" class="form-control" id="presupuesto" aria-label="Entrada de dato de presupuesto del usuario." placeholder="ej. 35000">
+                            <input type="number" class="form-control" id="presupuesto" placeholder="Enter your budget">
 
                             <select id="divisa" name="divisa" class="form-select form-select-sm" aria-label=".form-select-sm example">
                                 <option selected>Divisa</option>
@@ -57,26 +57,22 @@
 
                     <div class="p-2 bg-light border rounded">
 
-                        <h2 class="display-6 p-1">Agregar Gastos</h2>
+                        <h2 class="display-6 p-1">Gastos</h2>
 
                         <div class="input-group mb-3 display" id="divAgregarGastos">
                             
-
                             <form id="formGastos">
 
-                                <div class="col-12">
-                                    <label for="tituloGasto" class="form-label">Título</label>
+                                <div class="col-12 m-3">
                                     <input type="text" name="titulo" class="form-control" id="inputTitulo" placeholder="Enter the title" aria-label=titulo">
                                 </div>
                                     
-                                <div class="col-12">
-                                    <label for=categoriaGasto" class="form-label">Categoría</label>
+                                <div class="col-12 m-3">
                                     <input type="text" name="categoria" class="form-control" id="inputCategoria" placeholder="Enter the category" aria-label="categoria">
                                 </div>
                                     
-                                <div class="col-12 input-group">
-                                    <label for="tituloGasto" class="form-label">Monto</label>
-                                    <input type="number" name="monto" class="form-control" id="inputMonto" aria-label="Monto del gasto(con punto y dos decimales)" placeholder="Enter the amount">
+                                <div class="col-12 input-group m-3">
+                                    <input type="number" name="monto" class="form-control" id="inputMonto" placeholder="Enter the amount">
                                     <div id="divNoCargoMonto"></div>
                                 </div>
 
@@ -88,7 +84,11 @@
                     </div>
 
                     <div class="container p-3 bg-light border rounded">
+
                         <button id="btnGastos" class="btn btn-dark mt-1">Mostrar Gastos</button>
+                        <button id="btnMostrarPresupuesto" class="btn btn-secondary mt-1">Mostrar Presupuesto</button>
+
+                        <div id="divMostrarPresupuesto" class="row m-3"></div>
                         <div id= "divGastos" class="row"></div> 
                     </div>
                 
