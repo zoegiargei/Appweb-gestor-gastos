@@ -14,7 +14,7 @@ const btnMostrarPresupuesto = document.getElementById(`btnMostrarPresupuesto`)
 const divPresupuestoAgotado = document.getElementById(`divPresupuestoAgotado`)
 
 //Iniciamos el div de Mostrar Presupuesto en ""
-divMostrarPresupuesto.innerHTML=""
+mostrarPresupuesto(presupuesto)
 
 //Preguntamos en el Local storage si hay guardados datos de Gastos, Presupuesto y Divisa
 if (localStorage.getItem(`gastos`,`presupuesto`,`divisa`)) { //consulto y capturo datos del storage

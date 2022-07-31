@@ -53,6 +53,7 @@ function mostrarGastos(){
                 console.log(`Monto de gasto a eliminar: ${gasto.monto}`)
                 console.log(`presupuesto + gasto eliminado: ${presupuesto}`)
                 //
+                
                 mostrarPresupuesto(presupuesto)
     
                 localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
