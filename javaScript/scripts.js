@@ -67,14 +67,8 @@ formGastos.addEventListener(`submit`, (e) => {
     
     let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
 
-    if(presupuestoEnStorage < gasto.monto){
-        
-        divPresupuestoAgotado.innerHTML = ``
-        divPresupuestoAgotado.innerHTML += `
-        <p class="mensajeAlerta">No se puede cargar gasto. El valor del presupuesto es menor al gasto que quiere ingresar</p>`
-        
-    } else{
-        
+    if(presupuestoEnStorage > parseFloat(gasto.monto)){
+
         divPresupuestoAgotado.innerHTML = ``
         
         gastos.push(gasto) //Agregamos al Array Gastos[] el nuevo gasto
@@ -87,6 +81,13 @@ formGastos.addEventListener(`submit`, (e) => {
     
         formGastos.reset() //Reseteamos el formulario, es decír que en la interfaz de usuario quedará vacío
     
+        mostrarPresupuesto(presupuesto)
+        
+    } else{
+        
+        divPresupuestoAgotado.innerHTML = ``
+        divPresupuestoAgotado.innerHTML += `
+        <p class="mensajeAlerta">No se puede cargar gasto. El valor del presupuesto es menor al gasto que quiere ingresar</p>`
         mostrarPresupuesto(presupuesto)
     }
 
