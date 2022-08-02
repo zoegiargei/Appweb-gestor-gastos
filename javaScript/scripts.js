@@ -1,8 +1,7 @@
 //Array de gastos del usuario
 let gastos = []
 //Presupuesto y divisa
-let presupuesto = 0
-let divisa = ""
+let presupuesto = {}
 
 //Variables capturadas del DOM
 const formPresupuesto = document.getElementById(`formPresupuesto`)
@@ -12,24 +11,22 @@ const divNoCargoMonto = document.getElementById(`divNoCargoMonto`)
 const divMostrarPresupuesto = document.getElementById(`divMostrarPresupuesto`)
 const btnMostrarPresupuesto = document.getElementById(`btnMostrarPresupuesto`)
 const divPresupuestoAgotado = document.getElementById(`divPresupuestoAgotado`)
+const divValidacionPresupuesto = document.getElementById(`divValidacionPresupuesto`)
 
-//Iniciamos el div de Mostrar Presupuesto en ""
-mostrarPresupuesto(presupuesto)
 
 //Preguntamos en el Local storage si hay guardados datos de Gastos, Presupuesto y Divisa
 if (localStorage.getItem(`gastos`,`presupuesto`,`divisa`)) { //consulto y capturo datos del storage
-
+    
     gastos = JSON.parse(localStorage.getItem(`gastos`))
     presupuesto = JSON.parse(localStorage.getItem(`presupuesto`))
-    divisa = JSON.parse(localStorage.getItem(`divisa`))
-
+    
     divContenedorPresupuesto.classList.toggle(`removeContenedor`)
     divAgregarGastos.classList.remove(`display`)
-
+    
 } else { //Si la respuesta es que NO hay datos guardados agregamos al local storage las variables iniciadas vacías
+
     localStorage.setItem('gastos', JSON.stringify(gastos)) //agrego datos al storage si es que previamente no había
     localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
-    localStorage.setItem(`divisa`, JSON.stringify(divisa))
 }
 
 
@@ -38,13 +35,13 @@ formPresupuesto.addEventListener(`submit`, (e)=>{
     
     e.preventDefault() //Prevenimos función respuesta parámetro por defecto
     
-    presupuesto = document.getElementById(`presupuesto`).value
-    divisa = document.getElementById(`divisa`).value
-    
+    const inputPresupuesto = document.getElementById(`presupuesto`).value
+    const divisa = document.getElementById(`divisa`).value
+
+    presupuesto = new Presupuesto(inputPresupuesto, divisa)
     console.log(presupuesto) //prueba
     
     localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
-    localStorage.setItem(`divisa`, JSON.stringify(divisa))
     
     divContenedorPresupuesto.classList.toggle(`removeContenedor`, presupuesto != 0)
     divAgregarGastos.classList.remove(`display`)
@@ -52,7 +49,7 @@ formPresupuesto.addEventListener(`submit`, (e)=>{
     mostrarPresupuesto(presupuesto)
 })
 
-//Cargar gastos + Agregar al local storage el array gastos[]
+//Cargar gastos + Agregar al local storage el array gastos[] + restar valor gasto.monto en valor presupuesto.presupuesto
 const formGastos = document.getElementById(`formGastos`)
 
 formGastos.addEventListener(`submit`, (e) => {
@@ -62,21 +59,20 @@ formGastos.addEventListener(`submit`, (e) => {
 
     let datForm = new FormData(e.target) /*Usamos el objeto formData; para poder capturar los datos del DOM con formData debemos agregar atribuo name a los elementos que estén dentro del formulario*/
     
-    //let montoGasto = document.getElementById(`inputMonto`).value
     let gasto = new Gasto(datForm.get(`titulo`), datForm.get(`categoria`), datForm.get(`monto`))
     
     let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
 
-    if(presupuestoEnStorage > parseFloat(gasto.monto)){
+    if(presupuestoEnStorage.presupuesto > parseFloat(gasto.monto)){
 
         divPresupuestoAgotado.innerHTML = ``
         
         gastos.push(gasto) //Agregamos al Array Gastos[] el nuevo gasto
         
-        presupuesto -= gasto.monto
+        presupuestoEnStorage.presupuesto -= gasto.monto
     
         //Agregamos a LocalStorage el nuevo valor de Presupuesto y Gastos[]
-        localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
+        localStorage.setItem(`presupuesto`, JSON.stringify(presupuestoEnStorage))
         localStorage.setItem(`gastos`, JSON.stringify(gastos))
     
         formGastos.reset() //Reseteamos el formulario, es decír que en la interfaz de usuario quedará vacío

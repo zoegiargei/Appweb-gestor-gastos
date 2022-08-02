@@ -1,4 +1,11 @@
 //Clases
+class Presupuesto{
+    constructor(presupuesto, divisa){
+        this.presupuesto = presupuesto
+        this.divisa = divisa
+    }
+}
+
 class Gasto{
     constructor(titulo, categoria, monto){
         this.titulo = titulo
@@ -7,3 +14,4 @@ class Gasto{
         this.fecha = (new Date()).toLocaleDateString()
     }
 }
+
