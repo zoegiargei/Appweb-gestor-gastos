@@ -7,7 +7,8 @@ class Presupuesto{
 }
 
 class Gasto{
-    constructor(titulo, categoria, monto){
+    constructor(id, titulo, categoria, monto){
+        this.id = id
         this.titulo = titulo
         this.categoria = categoria
         this.monto = monto

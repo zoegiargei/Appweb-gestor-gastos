@@ -9,28 +9,6 @@ function quitarAlerta(){
     divMostrarPresupuesto.classList.remove(`vibrate-1`)
 }
 
-/*
-function eliminarGasto(){
-
-    let datosEnStorage = JSON.parse(localStorage.getItem(`gastos`))
-    let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
-
-    datosEnStorage.forEach((gasto, indice) => {
-
-        const botonGastoAEliminar = document.getElementById(`gasto${indice}`).lastElementChild.lastElementChild
-        botonGastoAEliminar.addEventListener("click", () =>{
-            document.getElementById(`gasto${indice}`).remove()
-            datosEnStorage.splice(datosEnStorage.indexOf(gasto), 1)
-            localStorage.setItem("gastos", JSON.stringify(datosEnStorage))
-
-            presupuestoEnStorage.presupuesto += gasto.monto
-            localStorage.setItem(`presupuesto`, JSON.stringify(presupuestoEnStorage))
-            mostrarPresupuesto(presupuesto)
-        })
-    })
-
-}
-*/
 
 //Función para mostrar prespuesto en DOM
 function mostrarPresupuesto(presupuesto){
@@ -49,12 +27,42 @@ function mostrarPresupuesto(presupuesto){
     divMostrarPresupuesto.innerHTML = ``
 
     divMostrarPresupuesto.innerHTML += `
-        <p>Presupuesto: ${presupuestoEnStorage.presupuesto} ${presupuestoEnStorage.divisa}</p>
+        <p class="p">Presupuesto: ${presupuestoEnStorage.presupuesto} ${presupuestoEnStorage.divisa}</p>
     `
 
     //Aplicación de operador Ternario.
     presupuestoEnStorage.presupuesto < 10 ? mostrarAlerta() : quitarAlerta()
 }
+
+
+//Eliminar Gasto
+
+/* function eliminarGasto(){
+
+    let datosEnStorage = JSON.parse(localStorage.getItem(`gastos`))
+
+    datosEnStorage.forEach((gasto) => {
+
+        const btnEliminarGasto = ((document.getElementById(`gasto${gasto.id}`))
+        .lastElementChild).lastElementChild
+
+        btnEliminarGasto.addEventListener(`click`, () => {
+
+            document.getElementById(`gasto${gasto.id}`).remove()
+
+            let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
+            presupuestoEnStorage.presupuesto += gasto.monto
+
+            datosEnStorage.splice(datosEnStorage.indexOf(gasto), 1)
+            
+            localStorage.setItem(`presupuesto`, JSON.stringify(presupuestoEnStorage))
+            localStorage.setItem(`gastos`, JSON.stringify(datosEnStorage))
+
+            mostrarPresupuesto(presupuestoEnStorage)
+            eliminarGasto()
+        })
+    })
+} */
 
 //función para mostrar gastos en DOM
 function mostrarGastos(){
@@ -66,54 +74,47 @@ function mostrarGastos(){
     datosEnStorage.forEach((gasto, indice) => {
 
         divGastos.innerHTML += `
-        <div class="contenedorMostrarGasto" id="gasto${indice}" style="max-width: 20rem; margin:4px;">
+        <div class="contenedorMostrarGasto" id="gasto${gasto.id}" style="max-width: 20rem; margin:4px;">
             <div><h4>${gasto.titulo}</h4></div>
             <div>
                 <p>Categoría: ${gasto.categoria}</p>
-                <p>Monto: ${gasto.monto} ${presupuesto.divisa}</p>
+                <p>Monto: ${gasto.monto} ${datosPresupuesto.divisa}</p>
                 <p>Fecha: ${gasto.fecha}</p>
-                <button class="btnEliminarGasto">Eliminar Gasto</button>
+                <button class="btnEliminarGasto" id="botonGastoAEliminar">Eliminar Gasto</button>
             </div>
         </div>
         `
 
-        let btnEliminarGasto = document.getElementById(`gasto${indice}`).lastElementChild.lastElementChild
-        let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
+        const btnEliminarGasto = ((document.getElementById(`gasto${gasto.id}`))
+        .lastElementChild).lastElementChild
 
         btnEliminarGasto.addEventListener(`click`, () => {
 
-            divGastosFiltrados.innerHTML = ``
-            
-            document.getElementById(`gasto${indice}`).remove()
-            gastos.splice(indice, 1)
+            document.getElementById(`gasto${gasto.id}`).remove()
 
-            if(gastos.length == 1){
-                let gastoAEliminar = document.getElementById(`gasto${0}`) 
-                gastoAEliminar.remove()
-                gastos.shift()
-            } else{
-                let gastoAEliminar = document.getElementById(`gasto${indice}`)
-                gastoAEliminar.remove()
-                gastos.splice(indice, 1)
-            }
-            
-            //Aplicación de Destructuring
-            let {monto} = gasto
+            let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
+            presupuestoEnStorage.presupuesto += gasto.monto
 
-            console.log(`Presupuesto antes de sumar gasto eliminado: ${presupuestoEnStorage.presupuesto}`) //Prueba en consola
-
-            presupuestoEnStorage.presupuesto += parseFloat(monto)
-
-            //Pruebas en consola
-            console.log(`Monto de gasto a eliminar: ${monto}`)
-            console.log(`presupuesto + gasto eliminado: ${presupuestoEnStorage.presupuesto}`)
-            //
+            datosEnStorage.splice(datosEnStorage.indexOf(gasto), 1)
             
             localStorage.setItem(`presupuesto`, JSON.stringify(presupuestoEnStorage))
-            localStorage.setItem(`gastos`, JSON.stringify(gastos))
-            console.log(`${gasto.titulo} Eliminado`)
-            
-            mostrarPresupuesto(presupuesto)
+            localStorage.setItem(`gastos`, JSON.stringify(datosEnStorage))
+
+            mostrarPresupuesto(presupuestoEnStorage)
+            //eliminarGasto()
         })
+
+        //eliminarGasto()
     })
+    //eliminarGasto()
 }
+
+function error(mensaje){
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: 'Dato ingresado no válido',
+      footer: mensaje
+    })
+  }

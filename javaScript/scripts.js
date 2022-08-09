@@ -15,41 +15,57 @@ const divValidacionPresupuesto = document.getElementById(`divValidacionPresupues
 
 //Aplicación de operador Lógico Or
 let gastos = JSON.parse(localStorage.getItem(`gastos`)) || []
-let presupuesto = JSON.parse(localStorage.getItem(`presupuesto`)) || {}
+let datosPresupuesto = JSON.parse(localStorage.getItem(`presupuesto`)) || {}
 
 //Preguntamos en el Local storage si hay guardados datos de Gastos, Presupuesto y Divisa
 if (localStorage.getItem(`gastos`,`presupuesto`)) { //consulto y capturo datos del storage
 
     divContenedorPresupuesto.classList.toggle(`removeContenedor`)
     divAgregarGastos.classList.remove(`display`)
-    mostrarPresupuesto(presupuesto)
+    mostrarPresupuesto(datosPresupuesto)
     
 } else { //Si la respuesta es que NO hay datos guardados agregamos al local storage las variables iniciadas vacías
 
     localStorage.setItem('gastos', JSON.stringify(gastos)) //agrego datos al storage si es que previamente no había
-    localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
+    localStorage.setItem(`presupuesto`, JSON.stringify(datosPresupuesto))
 }
 
 
 //Cargar Presupuesto + Agregar al localStorage
 formPresupuesto.addEventListener(`submit`, (e)=>{
-    
-    e.preventDefault() //Prevenimos función respuesta parámetro por defecto
-    
-    const inputPresupuesto = document.getElementById(`presupuesto`).value
-    const divisa = document.getElementById(`divisa`).value
+    e.preventDefault()
 
-    presupuesto = new Presupuesto(inputPresupuesto, divisa)
-    console.log(presupuesto) //prueba
+    let dataForm = new FormData(e.target)
+    datosPresupuesto = new Presupuesto(Number(dataForm.get(`presupuesto`)), dataForm.get(`divisa`))
+
+    datosPresupuesto.presupuesto || error(`Ingrese valor de presupuesto mayor a 0`)
+
+    if((datosPresupuesto.presupuesto == 0) || (datosPresupuesto.presupuesto == undefined) && datosPresupuesto.divisa == `divisa`){
+        error(`No ingresó presupuesto ni divisa válidos`)
+    } else if(datosPresupuesto.divisa == `divisa`){
+        error(`Seleccione una divisa`)
+    } else{
+        
+        localStorage.setItem(`presupuesto`, JSON.stringify(datosPresupuesto))
+        mostrarPresupuesto(datosPresupuesto)
+
+        divContenedorPresupuesto.classList.toggle(`removeContenedor`)
+        divAgregarGastos.classList.remove(`display`)
+
+        Toastify({
+            text: "El presupuesto fué agregado con éxito",
+            className: "info",
+            style: {
+              background: "linear-gradient(90deg, rgba(164,166,208,1) 35%, rgba(216,203,232,0.9164040616246498) 100%)",
+            }
+        }).showToast();
+
+        formPresupuesto.reset()
+    }
     
-    localStorage.setItem(`presupuesto`, JSON.stringify(presupuesto))
-    
-    divContenedorPresupuesto.classList.toggle(`removeContenedor`, presupuesto != 0)
-    divAgregarGastos.classList.remove(`display`)
-    
-    mostrarPresupuesto(presupuesto)
 })
 
+let cont = 0
 //Cargar gastos + Agregar al local storage el array gastos[] + restar valor gasto.monto en valor presupuesto.presupuesto
 const formGastos = document.getElementById(`formGastos`)
 
@@ -58,9 +74,11 @@ formGastos.addEventListener(`submit`, (e) => {
     e.preventDefault()
     //console.log(e.target)
 
+    cont++
+
     let datForm = new FormData(e.target) /*Usamos el objeto formData; para poder capturar los datos del DOM con formData debemos agregar atribuo name a los elementos que estén dentro del formulario*/
     
-    let gasto = new Gasto(datForm.get(`titulo`), datForm.get(`categoria`), Number(datForm.get(`monto`)))
+    let gasto = new Gasto(cont, datForm.get(`titulo`), datForm.get(`categoria`), Number(datForm.get(`monto`)))
     
     let presupuestoEnStorage = JSON.parse(localStorage.getItem(`presupuesto`))
 
@@ -76,15 +94,27 @@ formGastos.addEventListener(`submit`, (e) => {
         localStorage.setItem(`presupuesto`, JSON.stringify(presupuestoEnStorage))
         localStorage.setItem(`gastos`, JSON.stringify(gastos))
     
+        mostrarPresupuesto(presupuesto)
+
+        Toastify({
+            text: "El gasto fué agregado con éxito",
+            className: "info",
+            style: {
+              background: "linear-gradient(90deg, rgba(164,166,208,1) 35%, rgba(216,203,232,0.9164040616246498) 100%)",
+            }
+        }).showToast();
+        
         formGastos.reset() //Reseteamos el formulario, es decír que en la interfaz de usuario quedará vacío
     
-        mostrarPresupuesto(presupuesto)
         
     } else{
-        
-        divPresupuestoAgotado.innerHTML = ``
-        divPresupuestoAgotado.innerHTML += `
-        <p class="mensajeAlerta">No se puede cargar gasto. El valor del presupuesto es menor al gasto que quiere ingresar</p>`
+    
+        Swal.fire({
+            icon: 'Presupuesto Agotado',
+            title: 'Oops...',
+            text: 'No se puede cargar gasto, el presupuesto es menor al monto que quiere ingresar',
+        })
+
         mostrarPresupuesto(presupuesto)
     }
 
@@ -172,7 +202,6 @@ formFiltros.addEventListener(`submit`, (e) => {
             if (a.monto < b.monto) {
                 return -1;
             }
-            // a must be equal to b
             return 0;
         })
 
@@ -201,7 +230,6 @@ formFiltros.addEventListener(`submit`, (e) => {
             if (a.monto > b.monto) {
                 return -1;
             }
-            // a must be equal to b
             return 0;
         })
 
